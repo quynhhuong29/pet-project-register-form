@@ -5,10 +5,12 @@ const CheckboxHook = ({ control, text, ...props }) => {
   const { field } = useController({
     control,
     name: props.name,
+    defaultValue: false,
   });
+  console.log("🚀 ~ file: CheckboxHook.js ~ line 10 ~ CheckboxHook ~ field", field)
   return (
     <label className="cursor-pointer custom-checkbox">
-      <input type="checkbox" className="hidden" {...field} {...props} />
+      <input type="checkbox" className="hidden" checked={field.value} {...field} {...props} />
       <div className="flex items-center gap-x-3">
         <div className="transition-all w-full h-full bg-white rounded-md flex items-center justify-center custom-checkbox-square">
           <svg

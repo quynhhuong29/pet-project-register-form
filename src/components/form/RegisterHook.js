@@ -56,21 +56,39 @@ const dropdownData = [
 const RegisterHook = () => {
   const {
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid, isSubmitting, isSubmitSuccessful },
     control,
     setValue,
     getValues,
+    reset,
+    watch
   } = useForm({
     resolver: yupResolver(schema),
+    mode: "onChange",
+    defaultValues: {
+      gender: "male",
+    }
   });
 
   const onSubmitHandler = (values) => {
-    console.log(
-      "🚀 ~ file: RegisterHook.js ~ line 11 ~ onSubmitHandler ~ values",
-      values
-    );
+    if (!isValid) return;
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+        console.log("🚀 ~ values", values);
+        reset({
+          username: "",
+          email: "",
+          password: "",
+          gender: "male",
+          job: "",
+          terms: false,
+        });
+      }, 3000);
+    });
   };
 
+  const watchGender = watch("gender");
   return (
     <form
       onSubmit={handleSubmit(onSubmitHandler)}
@@ -120,7 +138,12 @@ const RegisterHook = () => {
         <label className="cursor-pointer">Gender</label>
         <div className="flex items-center gap-5">
           <div className="flex items-center gap-x-3">
-            <RadioHook control={control} name="gender" value="male"></RadioHook>
+            <RadioHook
+              control={control}
+              name="gender"
+              value="male"
+              checked = {watchGender === 'male'}
+            ></RadioHook>
             <span className="cursor-pointer">Male</span>
           </div>
           <div className="flex items-center gap-x-3">
@@ -128,6 +151,7 @@ const RegisterHook = () => {
               control={control}
               name="gender"
               value="female"
+              checked = {watchGender === 'female'}
             ></RadioHook>
             <span className="cursor-pointer">Female</span>
           </div>
@@ -141,6 +165,7 @@ const RegisterHook = () => {
           setValue={setValue}
           name="job"
           data={dropdownData}
+          dropdownLabel="Select your job"
         ></DropdownHook>
         <p className="text-red-500 text-sm">{errors.job?.message}</p>
       </div>
@@ -152,8 +177,17 @@ const RegisterHook = () => {
         ></CheckboxHook>
         <p className="text-red-500 text-sm">{errors.terms?.message}</p>
       </div>
-      <button className="w-full p-5 bg-[#2979FF] text-white rounded-lg mt-5 font-semibold">
-        Submit
+      <button
+        className={`w-full p-5 bg-[#2979FF] text-white rounded-lg mt-5 font-semibold ${
+          isSubmitting ? "opacity-50" : ""
+        }`}
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? (
+          <div className="w-5 h-5 rounded-full border-2 border-white border-t-2 border-t-transparent mx-auto animate-spin"></div>
+        ) : (
+          "Submit"
+        )}
       </button>
     </form>
   );
