@@ -89,6 +89,7 @@ const RegisterHook = () => {
   };
 
   const watchGender = watch("gender");
+  console.log("test")
   return (
     <form
       onSubmit={handleSubmit(onSubmitHandler)}
